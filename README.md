@@ -1,4 +1,4 @@
-# my_app
+# Speedometer
 
 A new Flutter project.
 

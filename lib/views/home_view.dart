@@ -5,7 +5,7 @@ import 'package:segment_display/segment_display.dart';
 
 
 class HomeView extends StatefulWidget {
-  var time1, time2, counter=1, diffrenceFrom10to30=0, diffrenceFrom30to10=0; 
+  var time1, time2,time3, time4, lastSpeedUp=0, lastSpeedDown=16, counter=1, diffrenceFrom10to30=0, diffrenceFrom30to10=0; 
   @override
   _HomeViewState createState() => new _HomeViewState();
 }
@@ -20,42 +20,61 @@ class _HomeViewState extends State<HomeView> {
     var speed = userLocation.speed;
     var speedkmph = (speed * 3.6).round();
 
-    if(speedkmph == 10 && widget.counter==1){
-        widget.time1 = new DateTime.fromMillisecondsSinceEpoch((userLocation.time).round(), isUtc: true);
-      }
-    else if(speedkmph == 30 && widget.counter==1){
-        widget.time2 = new DateTime.fromMillisecondsSinceEpoch((userLocation.time).round(), isUtc: true);
-        widget.diffrenceFrom10to30 = widget.time2.difference(widget.time1).inSeconds;
-        widget.counter = 2; 
-      }
-    else if(speedkmph == 30 && widget.counter==2){
-        widget.time1 = new DateTime.fromMillisecondsSinceEpoch((userLocation.time).round(), isUtc: true);
-      }
-    else if(speedkmph == 10 && widget.counter==2){
-        widget.time2 = new DateTime.fromMillisecondsSinceEpoch((userLocation.time).round(), isUtc: true);
-        widget.diffrenceFrom30to10 = widget.time2.difference(widget.time1).inSeconds;
-        widget.counter = 1; 
-      }
 
-    // if(speedkmph >= 10 && speedkmph <= 30 && widget.time1 >= widget.time2){
-    //   if(speedkmph == 10){
+//measure diffrence From 10 to 30
+    if(speedkmph >= 10 && speedkmph <= 15 && widget.time1 == null && widget.counter==1){
+        widget.time1 = new DateTime.fromMillisecondsSinceEpoch((userLocation.time).round(), isUtc: true);
+    }
+    else if(speedkmph >= 25 && speedkmph <= 35 && widget.time1 != null && widget.counter==1){
+      if(speedkmph>widget.lastSpeedUp ){
+        widget.lastSpeedUp = speedkmph;
+        widget.time2 = new DateTime.fromMillisecondsSinceEpoch((userLocation.time).round(), isUtc: true);
+      }
+    }
+    else if(widget.time1 != null && widget.time2 != null){
+      widget.diffrenceFrom10to30 = widget.time2.difference(widget.time1).inSeconds;
+      widget.counter = 2; 
+    }
+    else if(speedkmph<10){
+      widget.time1 = null;
+    }
+
+//measure diffrence From 30 to 10
+    if(speedkmph >= 25 && speedkmph <= 35 && widget.time3 == null && widget.counter==2){
+        widget.time3 = new DateTime.fromMillisecondsSinceEpoch((userLocation.time).round(), isUtc: true);
+    }
+    else if(speedkmph >= 10 && speedkmph <= 15 && widget.time3 != null && widget.counter==2){
+      if(speedkmph < widget.lastSpeedDown ){
+        widget.lastSpeedDown = speedkmph;
+        widget.time4 = new DateTime.fromMillisecondsSinceEpoch((userLocation.time).round(), isUtc: true);
+      }
+    }
+    else if(widget.time3 != null && widget.time4 != null){
+     widget.diffrenceFrom30to10 = widget.time4.difference(widget.time3).inSeconds;
+     widget.counter = 1; 
+    }
+    else if(speedkmph>35){
+        widget.time3 = null;
+    }
+
+    // if(speedkmph == 10 && widget.counter==1){
     //     widget.time1 = new DateTime.fromMillisecondsSinceEpoch((userLocation.time).round(), isUtc: true);
     //   }
-    //   else if(speedkmph <= 30){
+    // else if(speedkmph == 30 && widget.counter==1){
     //     widget.time2 = new DateTime.fromMillisecondsSinceEpoch((userLocation.time).round(), isUtc: true);
     //     widget.diffrenceFrom10to30 = widget.time2.difference(widget.time1).inSeconds;
+    //     widget.counter = 2; 
     //   }
-    // }
-    // else if(speedkmph >= 10 && speedkmph <= 30 ){
-    //   if(speedkmph == 30){
-    //     widget.time2 = new DateTime.fromMillisecondsSinceEpoch((userLocation.time).round(), isUtc: true);
-    //   }
-    //   else if(speedkmph <= 10){
+    // else if(speedkmph == 30 && widget.counter==2){
     //     widget.time1 = new DateTime.fromMillisecondsSinceEpoch((userLocation.time).round(), isUtc: true);
-    //     widget.diffrenceFrom30to10 = widget.time1.difference(widget.time2).inSeconds;
     //   }
-    // }
+    // else if(speedkmph == 10 && widget.counter==2){
+    //     widget.time2 = new DateTime.fromMillisecondsSinceEpoch((userLocation.time).round(), isUtc: true);
+    //     widget.diffrenceFrom30to10 = widget.time2.difference(widget.time1).inSeconds;
+    //     widget.counter = 1; 
+    //   }
 
+   
     return Container(
       alignment: Alignment.center,
       child: 
